@@ -130,6 +130,20 @@ impl<OffsetSize: OffsetSizeTrait, T: ArrayBuilder> GenericListBuilder<OffsetSize
             ..self
         }
     }
+
+    /// Override the nullable of the field passed to [`GenericListArray::new`]
+    ///
+    /// By default a nullable field is created with the name `item`. You can
+    /// use this method to override the field's nullable.
+    ///
+    /// Note: [`Self::finish`] and [`Self::finish_cloned`] will panic if the
+    /// field's data type does not match that of `T`
+    pub fn with_field_nullable(self, nullable: bool) -> Self {
+        let field = self
+            .field
+            .map(|f| Arc::new(f.as_ref().clone().with_nullable(nullable)));
+        Self { field, ..self }
+    }
 }
 
 impl<OffsetSize: OffsetSizeTrait, T: ArrayBuilder> ArrayBuilder
